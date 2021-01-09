@@ -1,41 +1,37 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { createPortal } from 'react-dom';
+import { useEffect } from "react";
+import { createPortal } from "react-dom";
+import PropTypes from "prop-types";
 
-import s from './Modal.module.css';
+import s from "./Modal.module.css";
 
-const modalRoot = document.querySelector('#portal-root');
+const modalRoot = document.querySelector("#portal-root");
 
-export default class Modal extends Component {
-  static propTypes = {
-    image: PropTypes.shape({
-      largeImageURL: PropTypes.string,
-      tags: PropTypes.string,
-    }),
-    closeModal: PropTypes.func.isRequired,
-  };
-  componentDidMount() {
-    window.addEventListener('keydown', this.closeModalHandler);
-  }
-  componentWillUnmount() {
-    window.removeEventListener('keydown', this.closeModalHandler);
-  }
-  closeModalHandler = e => {
-    const { closeModal } = this.props;
-    if (e.code === 'Escape' || e.target === e.currentTarget) {
+export default function Modal({ image, closeModal }) {
+  useEffect(() => {
+    window.addEventListener("keydown", closeModalHandler);
+  });
+
+  function closeModalHandler(e) {
+    if (e.code === "Escape" || e.target === e.currentTarget) {
       closeModal();
+      window.removeEventListener("keydown", closeModalHandler);
     }
   };
 
-  render() {
-    const { image } = this.props;
-    return createPortal(
-      <div className={s.Overlay} onClick={this.closeModalHandler}>
-        <div className={s.Modal}>
-          <img className={s.image} src={image.largeImageURL} alt={image.tags} />
-        </div>
-      </div>,
-      modalRoot,
-    );
-  }
+  return createPortal(
+    <div className={s.Overlay} onClick={closeModalHandler}>
+      <div className={s.Modal}>
+        <img className={s.image} src={image.largeImageURL} alt={image.tags} />
+      </div>
+    </div>,
+    modalRoot
+  );
 }
+
+Modal.propTypes = {
+  image: PropTypes.shape({
+    largeImageURL: PropTypes.string,
+    tags: PropTypes.string,
+  }),
+  closeModal: PropTypes.func.isRequired,
+};

@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-// import { createPortal } from 'react-dom';
 import { ToastContainer, Slide } from "react-toastify";
 import PropTypes from "prop-types";
 import "react-toastify/dist/ReactToastify.css";
@@ -12,8 +11,6 @@ import Loader from "react-loader-spinner";
 import SearchBar from "./components/Searchbar";
 
 const apiService = new ApiService();
-// const loaderRoot = document.querySelector('#portal-root');
-
 export default function App() {
   const [error, setError] = useState(null);
   const [images, setImages] = useState([]);
@@ -36,15 +33,15 @@ export default function App() {
         }
         setImages((prevImages) => [...prevImages, ...response.hits]);
         setStatus("resolved");
+        window.scrollTo({
+          top: document.documentElement.scrollHeight,
+          behavior: "smooth",
+        });
       })
       .catch((error) => {
         setStatus("error");
         setError(error.message);
       });
-    window.scrollTo({
-      top: document.documentElement.scrollHeight,
-      behavior: "smooth",
-    });
   }, [searchQuery, queryPage]);
 
   const onLoadMoreBtnClick = () => {
@@ -64,7 +61,7 @@ export default function App() {
         autoClose={2500}
         transition={Slide}
       />
-      <SearchBar onSubmit={onSearchBarSubmit} />
+      <SearchBar onSearchBarSubmit={onSearchBarSubmit} />
       {status === "error" && <b className={s.noImagesFoundWarn}>{error}</b>}
       {images.length > 0 && <ImageGallery images={images} />}
       {status === "pending" && (
@@ -84,5 +81,5 @@ export default function App() {
 }
 
 App.propTypes = {
-  searchQuery: PropTypes.string,
+  newSearchQuery: PropTypes.string,
 };

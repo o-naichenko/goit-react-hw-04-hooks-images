@@ -1,50 +1,43 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { PureComponent } from 'react';
-import { createPortal } from 'react-dom';
+import { useState } from "react";
+import { createPortal } from "react-dom";
+import PropTypes from "prop-types";
 
-import s from './ImageGallery.module.css';
-import ImageGalleryItem from '../ImageGalleryItem';
-import Modal from '../Modal';
+import s from "./ImageGallery.module.css";
 
-const modalRoot = document.querySelector('#portal-root');
+import ImageGalleryItem from "../ImageGalleryItem";
+import Modal from "../Modal";
 
-export default class ImageGallery extends PureComponent {
-  static propTypes = {
-    images: PropTypes.arrayOf(PropTypes.object).isRequired,
-  };
+const modalRoot = document.querySelector("#portal-root");
 
-  state = {
-    largeImage: null,
+export default function ImageGallery({ images }) {
+  const [largeImage, setLargeImage] = useState(null);
+
+  const onImageClick = (image) => {
+    setLargeImage(image);
   };
-  onImageClick = largeImage => {
-    this.setState({
-      largeImage: largeImage,
-    });
+  const onCloseModal = () => {
+    setLargeImage(null);
   };
-  onCloseModal = () => {
-    this.setState({ largeImage: null });
-  };
-  render() {
-    const { images } = this.props;
-    const { largeImage } = this.state;
-    return (
-      <>
-        {largeImage &&
-          createPortal(
-            <Modal image={largeImage} closeModal={this.onCloseModal} />,
-            modalRoot,
-          )}
-        <ul className={s.ImageGallery}>
-          {images.map(image => (
-            <ImageGalleryItem
-              image={image}
-              key={image.webformatURL}
-              onImageClick={this.onImageClick}
-            />
-          ))}
-        </ul>
-      </>
-    );
-  }
+  return (
+    <>
+      {largeImage &&
+        createPortal(
+          <Modal image={largeImage} closeModal={onCloseModal} />,
+          modalRoot
+        )}
+      <ul className={s.ImageGallery}>
+        {images.map((image) => (
+          <ImageGalleryItem
+            image={image}
+            key={image.webformatURL}
+            onImageClick={onImageClick}
+          />
+        ))}
+      </ul>
+    </>
+  );
 }
+
+ImageGallery.propTypes = {
+  images: PropTypes.arrayOf(PropTypes.object).isRequired,
+};
