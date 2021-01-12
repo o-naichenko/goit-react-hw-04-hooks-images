@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import { createPortal } from "react-dom";
 import PropTypes from "prop-types";
 
@@ -16,7 +16,7 @@ export default function Modal({ image, closeModal }) {
       closeModal();
       window.removeEventListener("keydown", closeModalHandler);
     }
-  };
+  }
 
   return createPortal(
     <div className={s.Overlay} onClick={closeModalHandler}>
